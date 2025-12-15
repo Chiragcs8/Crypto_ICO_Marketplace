@@ -53,7 +53,7 @@ export const StateContextProvider = ({ children }) => {
 
       if (accounts.length) {
         setAddress(accounts[0]);
-        const provider = new ethers.providers.Web3Provider(connection);
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
         const getbalance = await provider.getBalance(accounts[0]);
         const bal = ethers.utils.formatEther(getbalance);
         setAccountBalance(bal);
@@ -76,7 +76,7 @@ export const StateContextProvider = ({ children }) => {
 
       if (accounts.length) {
         setAddress(accounts[0]);
-        const provider = new ethers.providers.Web3Provider(connection);
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
         const getbalance = await provider.getBalance(accounts[0]);
         const bal = ethers.utils.formatEther(getbalance);
         setAccountBalance(bal);
@@ -206,11 +206,11 @@ export const StateContextProvider = ({ children }) => {
             };
           })
         );
-        setLoader(false)
-        return _tokenArray
+        setLoader(false);
+        return _tokenArray;
       }
     } catch (error) {
-      notifyError("Something went wrong")
+      notifyError("Something went wrong");
       console.log(error);
     }
   };
@@ -242,11 +242,11 @@ export const StateContextProvider = ({ children }) => {
             };
           })
         );
-        setLoader(false)
-        return _tokenArray
+        setLoader(false);
+        return _tokenArray;
       }
     } catch (error) {
-      notifyError("Something went wrong")
+      notifyError("Something went wrong");
       console.log(error);
     }
   };
@@ -287,6 +287,7 @@ export const StateContextProvider = ({ children }) => {
     try {
       setLoader(true);
       notifySuccess("Purchasing token....");
+      if (!tokenQuentity || !tokenAdress) return notifyError("Data Missing");
 
       const address = await connectWallet();
       const contract = await ICO_MARKETPLACE_CONTRACT();
@@ -343,7 +344,7 @@ export const StateContextProvider = ({ children }) => {
       notifySuccess("transaction is processing...");
       const address = await connectWallet();
 
-      const contract = await ICO_MARKETPLACE_CONTRACT();
+      const contract = await TOKEN_CONTRACT(transferTokenData.tokenAdd);
       const _availbleBal = await contract.balanceOf(address);
       const availableToken = ethers.utils.formatEther(_availbleBal.toString());
 
