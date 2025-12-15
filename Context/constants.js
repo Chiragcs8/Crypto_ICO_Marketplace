@@ -90,8 +90,8 @@ export const shortenAddress = (address) =>
 
 //CONTRACT
 
-const fetchContract = (address, abi, singer) =>
-  new ethers.Contract(address, abi, singer);
+const fetchContract = (address, abi, signer) =>
+  new ethers.Contract(address, abi, signer);
 
 export const ICO_MARKETPLACE_CONTRACT = async () => {
   try {
@@ -99,12 +99,12 @@ export const ICO_MARKETPLACE_CONTRACT = async () => {
     const connection = await web3modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
 
-    const singer = provider.getSigner();
+    const signer = provider.getSigner();
 
     const contract = fetchContract(
       ICO_MARKETPLACE_ADDRESS,
       ICO_MARKETPLACE_ABI,
-      singer
+      signer
     );
 
     return contract;
@@ -120,9 +120,9 @@ export const TOKEN_CONTRACT = async (TOKEN_ADDRESS) => {
     const connection = await web3modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
 
-    const singer = provider.getSigner();
+    const signer = provider.getSigner();
 
-    const contract = fetchContract(TOKEN_ADDRESS, ERC20Generator_ABI, singer);
+    const contract = fetchContract(TOKEN_ADDRESS, ERC20Generator_ABI, signer);
 
     return contract;
   } catch (error) {

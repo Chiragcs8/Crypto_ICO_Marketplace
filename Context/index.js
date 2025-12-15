@@ -20,6 +20,7 @@ import {
   TOKEN_CONTRACT,
   PINATA_AIP_KEY,
   PINATA_SECRECT_KEY,
+  ERC20Generator_ABI,
 } from "./constants";
 
 const StateContext = createContext();
@@ -39,7 +40,384 @@ export const StateContextProvider = ({ children }) => {
   const [openTokenCreator, setOpenTokenCreator] = useState(false);
   const [openCreateICO, setOpenCreateICO] = useState(false);
 
-   
+  const notifySuccess = (msg) => toast.success(msg, { duration: 200 });
+  const notifyError = (msg) => toast.error(msg, { duration: 200 });
+
+  //FUNCTIONS
+  const checkIfWalletConnected = async () => {
+    try {
+      if (!window.ethereum) return notifyError("No account found");
+      const accounts = await window.ethereum.request({
+        method: "eth_accounts",
+      });
+
+      if (accounts.length) {
+        setAddress(accounts[0]);
+        const provider = new ethers.providers.Web3Provider(connection);
+        const getbalance = await provider.getBalance(accounts[0]);
+        const bal = ethers.utils.formatEther(getbalance);
+        setAccountBalance(bal);
+        return accounts[0];
+      } else {
+        notifyError("No account found");
+      }
+    } catch (error) {
+      console.log(error);
+      notifyError("No account found");
+    }
+  };
+
+  const connectWallet = async () => {
+    try {
+      if (!window.ethereum) return notifyError("No account found");
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+
+      if (accounts.length) {
+        setAddress(accounts[0]);
+        const provider = new ethers.providers.Web3Provider(connection);
+        const getbalance = await provider.getBalance(accounts[0]);
+        const bal = ethers.utils.formatEther(getbalance);
+        setAccountBalance(bal);
+        return accounts[0];
+      } else {
+        notifyError("No account found");
+      }
+    } catch (error) {
+      console.log(error);
+      notifyError("No account found");
+    }
+  };
+
+  //MAIN FUNCTION
+  const _deployContract = async (
+    signer,
+    account,
+    name,
+    symbol,
+    supply,
+    imageURL
+  ) => {
+    try {
+      const factory = new ethers.ContractFactory(
+        ERC20Generator_ABI,
+        ERC20Generator_BYTECODE,
+        signer
+      );
+      const totalSupply = Number(supply);
+      const _initSupply = ethers.utils.parseEther(
+        totalSupply.toString(),
+        "ether"
+      );
+
+      let contract = await factory.deploy(_initSupply, name, symbol);
+
+      const transaction = await contract.deployed();
+
+      if (contract.address) {
+        const today = Date.now();
+        let date = new Date(today);
+        const _tokenCreatedDate = date.toLocaleDateString("en-US");
+
+        const _token = {
+          account: account,
+          supply: supply.toString(),
+          name: name,
+          symbol: symbol,
+          tokenAdress: contract.address,
+          transactionHash: contract.deployTransaction.hash,
+          createdAt: _tokenCreatedDate,
+          logo: imageURL,
+        };
+
+        let tokenHistory = [];
+
+        const history = localStorage.getItem("TOKEN_HISTORY");
+        if (history) {
+          tokenHistory = JSON.parse(localStorage.getItem("TOKEN_HISTORY"));
+          tokenHistory.push(_token);
+          localStorage.setItem("TOKEN_HISTORY", tokenHistory);
+          setLoader(false);
+          setReCall(reCall + 1);
+          setOpenTokenCreator(false);
+        } else {
+          tokenHistory.push(_token);
+          localStorage.setItem("TOKEN_HISTORY", tokenHistory);
+          setLoader(false);
+          setReCall(reCall + 1);
+          setOpenTokenCreator(false);
+        }
+      }
+    } catch (error) {
+      setLoader(false);
+      notifyError("Something went wrong, try later");
+      console.log(error);
+    }
+  };
+
+  const createERC20 = async (token, account, imageURL) => {
+    const { name, symbol, supply } = token;
+
+    try {
+      setLoader(true);
+      notifySuccess("Creating token...");
+      if (!name || !symbol || !supply) {
+        notifyError("Data Missing");
+      } else {
+        const web3modal = new Web3Modal();
+        const connection = await web3modal.connect();
+        const provider = new ethers.providers.Web3Provider(connection);
+        const signer = provider.getSigner();
+
+        _deployContract(signer, account, name, symbol, supply, imageURL);
+      }
+    } catch (error) {
+      setLoader(false);
+      notifyError("Something went wrong, try later");
+      console.log(error);
+    }
+  };
+
+  const GET_ALL_ICOSALE_TOKEN = async () => {
+    try {
+      setLoader(true);
+      const address = await connectWallet();
+      const contract = await ICO_MARKETPLACE_CONTRACT();
+
+      if (address) {
+        const allICOSaleToken = await contract.getAllToken();
+
+        const _tokenArray = Promise.all(
+          allICOSaleToken.map(async (token) => {
+            const tokenContract = await TOKEN_CONTRACT(token?.token);
+
+            const balance = await tokenContract.balanceOf(
+              ICO_MARKETPLACE_ADDRESS
+            );
+            return {
+              creator: token.creator,
+              token: token.token,
+              namw: token.name,
+              symbol: token.symbol,
+              supported: token.supported,
+              price: ethers.utils.formatEther(token?.price.toString()),
+              icoSaleBal: ethers.utils.formatEther(balance.toString()),
+            };
+          })
+        );
+        setLoader(false)
+        return _tokenArray
+      }
+    } catch (error) {
+      notifyError("Something went wrong")
+      console.log(error);
+    }
+  };
+
+  const GET_ALL_USER_ICOSALE_TOKEN = async () => {
+    try {
+      setLoader(true);
+      const address = await connectWallet();
+      const contract = await ICO_MARKETPLACE_CONTRACT();
+
+      if (address) {
+        const allICOSaleToken = await contract.getTokenCreatedBy(address);
+
+        const _tokenArray = Promise.all(
+          allICOSaleToken.map(async (token) => {
+            const tokenContract = await TOKEN_CONTRACT(token?.token);
+
+            const balance = await tokenContract.balanceOf(
+              ICO_MARKETPLACE_ADDRESS
+            );
+            return {
+              creator: token.creator,
+              token: token.token,
+              namw: token.name,
+              symbol: token.symbol,
+              supported: token.supported,
+              price: ethers.utils.formatEther(token?.price.toString()),
+              icoSaleBal: ethers.utils.formatEther(balance.toString()),
+            };
+          })
+        );
+        setLoader(false)
+        return _tokenArray
+      }
+    } catch (error) {
+      notifyError("Something went wrong")
+      console.log(error);
+    }
+  };
+
+  const createICOSALE = async (icoSale) => {
+    try {
+      const { address, price } = icoSale;
+      if (!address | !price) return notifyError("Data is Missing");
+
+      setLoader(true);
+      notifySuccess("Creating icoSale...");
+      await connectWallet();
+
+      const contract = await ICO_MARKETPLACE_CONTRACT();
+
+      const payAmount = ethers.utils.parseUnits(price.toString(), "ethers");
+
+      const transaction = await contract.createICOSale(address, payAmount, {
+        gasLimit: ethers.utils.hexlify(8000000),
+      });
+
+      await transaction.wait();
+
+      if (transaction.hash) {
+        setLoader(false);
+        setOpenCreateICO(false);
+        setReCall(reCall + 1);
+      }
+    } catch (error) {
+      setLoader(false);
+      setOpenCreateICO(false);
+      notifyError("Something went wrong");
+      console.log(error);
+    }
+  };
+
+  const buyToken = async (tokenAdress, tokenQuentity) => {
+    try {
+      setLoader(true);
+      notifySuccess("Purchasing token....");
+
+      const address = await connectWallet();
+      const contract = await ICO_MARKETPLACE_CONTRACT();
+
+      const _tokenBal = await contract.getBalance(tokenAdress);
+      const _tokenDetails = await contract.getTokenDetails(tokenAdress);
+
+      const availableToken = ethers.utils.formatEther(_tokenBal.toString());
+
+      if (availableToken > 0) {
+        const price =
+          ethers.utils.formatEther(_tokenDetails.price.toString()) *
+          umber(tokenQuentity);
+
+        const payAmount = ethers.utils.parseUnits(price.toString(), "ether");
+
+        const transaction = await contract.buyToken(
+          tokenAdress,
+          Number(tokenQuentity),
+          {
+            value: payAmount.toString(),
+            gasLimit: ethers.utils.hexlify(8000000),
+          }
+        );
+
+        await transaction.wait();
+        setLoader(false);
+        setReCall(reCall + 1);
+        setOpenBuyToken(false);
+        notifySuccess("Transaction completed successfully");
+      } else {
+        setLoader(false);
+        setOpenBuyToken(false);
+        notifyError("Your token balance is 0");
+      }
+    } catch (error) {
+      setLoader(false);
+      setOpenBuyToken(false);
+      notifyError("Something went wrong");
+      console.log(error);
+    }
+  };
+
+  const transferTokens = async (transferTokenData) => {
+    try {
+      if (
+        !transferTokenData.address ||
+        !transferTokenData.amount ||
+        !transferTokenData.tokenAdd
+      )
+        return notifyError("Data is Missing");
+
+      setLoader(true);
+      notifySuccess("transaction is processing...");
+      const address = await connectWallet();
+
+      const contract = await ICO_MARKETPLACE_CONTRACT();
+      const _availbleBal = await contract.balanceOf(address);
+      const availableToken = ethers.utils.formatEther(_availbleBal.toString());
+
+      if (availableToken > 1) {
+        const payAmount = ethers.utils.parseUnits(
+          transferTokenData.amount.toString(),
+          "ether"
+        );
+        const transaction = await contract.transfer(
+          transferTokenData.address,
+          payAmount,
+          {
+            gasLimit: ethers.utils.hexlify(8000000),
+          }
+        );
+        await transaction.wait();
+        setLoader(false);
+        setReCall(reCall + 1);
+        setOpenTransferToken(false);
+        notifySuccess("Transaction completed successfully");
+      } else {
+        setLoader(false);
+        setReCall(reCall + 1);
+        setOpenTransferToken(false);
+        notifyError("Your balance is 0");
+      }
+    } catch (error) {
+      setLoader(false);
+      setReCall(reCall + 1);
+      setOpenTransferToken(false);
+      notifyError("Something went wrong");
+      console.log(error);
+    }
+  };
+
+  const widthdrawToken = async (widthdrawQuentity) => {
+    try {
+      if (!widthdrawQuentity.amount || !widthdrawQuentity.token)
+        return notifyError("Data is missing");
+
+      setLoader(true);
+      notifySuccess("Transaction is processing....");
+
+      const address = await connectWallet();
+      const contract = await ICO_MARKETPLACE_CONTRACT();
+
+      const payAmount = ethers.utils.parseUnits(
+        widthdrawQuentity.amount.toString(),
+        "ether"
+      );
+
+      const transaction = await contract.widthdrawToken(
+        widthdrawQuentity.token,
+        payAmount,
+        {
+          gasLimit: ethers.utils.hexlify(8000000),
+        }
+      );
+
+      await transaction.wait();
+      setLoader(false);
+      setReCall(reCall + 1);
+      setOpenWidthdrawToken(false);
+      notifySuccess("Transaction completed successfully");
+    } catch (error) {
+      setLoader(false);
+      setReCall(reCall + 1);
+      setOpenWidthdrawToken(false);
+      notifyError("Something went wrong");
+      console.log(error);
+    }
+  };
 
   return <StateContext.Provider value={{}}>{children}</StateContext.Provider>;
 };
+
+export const useStateContext = () => useContext(StateContext);
