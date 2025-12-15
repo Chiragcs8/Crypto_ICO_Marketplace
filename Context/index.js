@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 import {
   ERC20Generator,
   ERC20Generator_BYTECODE,
-  handleetworkSwitch,
+  handleNetworkSwitch,
   shortenAddress,
   ICO_MARKETPLACE_ADDRESS,
   ICO_MARKETPLACE_CONTRACT,
@@ -47,6 +47,7 @@ export const StateContextProvider = ({ children }) => {
   const checkIfWalletConnected = async () => {
     try {
       if (!window.ethereum) return notifyError("No account found");
+      await handleNetworkSwitch();
       const accounts = await window.ethereum.request({
         method: "eth_accounts",
       });
@@ -66,10 +67,14 @@ export const StateContextProvider = ({ children }) => {
       notifyError("No account found");
     }
   };
+  useEffect(()=>{
+    checkIfWalletConnected();
+  },[address])
 
   const connectWallet = async () => {
     try {
       if (!window.ethereum) return notifyError("No account found");
+      await handleNetworkSwitch();
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
@@ -418,7 +423,42 @@ export const StateContextProvider = ({ children }) => {
     }
   };
 
-  return <StateContext.Provider value={{}}>{children}</StateContext.Provider>;
+  return (
+    <StateContext.Provider
+      value={{
+        widthdrawToken,
+        transferTokens,
+        buyToken,
+        createICOSALE,
+        GET_ALL_USER_ICOSALE_TOKEN,
+        GET_ALL_ICOSALE_TOKEN,
+        createERC20,
+        connectWallet,
+        openBuyToken,
+        setOpenBuyToken,
+        openWidthdrawToken,
+        setOpenWidthdrawToken,
+        openTransferToken,
+        setOpenTransferToken,
+        openTokenCreator,
+        setOpenTokenCreator,
+        openCreateICO,
+        setOpenCreateICO,
+        address,
+        setAddress,
+        accountBalance,
+        loader,
+        setLoader,
+        currency,
+        PINATA_AIP_KEY,
+        PINATA_SECRECT_KEY,
+        ICO_MARKETPLACE_ADDRESS,
+        shortenAddress,
+      }}
+    >
+      {children}
+    </StateContext.Provider>
+  );
 };
 
 export const useStateContext = () => useContext(StateContext);

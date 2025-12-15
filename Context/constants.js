@@ -80,7 +80,7 @@ const changeNetwork = async ({ networkName }) => {
   }
 };
 
-export const handleetworkSwitch = async () => {
+export const handleNetworkSwitch = async () => {
   const networkName = "polygon_amoy";
   await changeNetwork({ networkName });
 };
