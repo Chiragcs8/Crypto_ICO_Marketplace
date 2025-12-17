@@ -192,7 +192,6 @@ export const StateContextProvider = ({ children }) => {
 
       if (address) {
         const allICOSaleToken = await contract.getAllTokens();
-        
 
         const _tokenArray = Promise.all(
           allICOSaleToken.map(async (token) => {
@@ -208,7 +207,7 @@ export const StateContextProvider = ({ children }) => {
               symbol: token.symbol,
               supported: token.supported,
               price: ethers.utils.formatEther(token?.price.toString()),
-              icoSaleBal: ethers.utils.formatEther(balance.toString()),
+              icoSaleBal: ethers.utils.formatEther(balance?.toString()),
             };
           })
         );
@@ -244,11 +243,13 @@ export const StateContextProvider = ({ children }) => {
               symbol: token.symbol,
               supported: token.supported,
               price: ethers.utils.formatEther(token?.price.toString()),
-              icoSaleBal: ethers.utils.formatEther(balance.toString()),
+              icoSaleBal: ethers.utils.formatEther(balance?.toString()),
             };
+            
           })
         );
         setLoader(false);
+        
         return _tokenArray;
       }
     } catch (error) {
@@ -351,8 +352,8 @@ export const StateContextProvider = ({ children }) => {
       const address = await connectWallet();
 
       const contract = await TOKEN_CONTRACT(transferTokenData.tokenAdd);
-      const _availbleBal = await contract.balanceOf(address);
-      const availableToken = ethers.utils.formatEther(_availbleBal.toString());
+      const _availableBal = await contract.balanceOf(address);
+      const availableToken = ethers.utils.formatEther(_availableBal.toString());
 
       if (availableToken > 1) {
         const payAmount = ethers.utils.parseUnits(

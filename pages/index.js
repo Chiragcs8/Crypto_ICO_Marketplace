@@ -76,15 +76,13 @@ const index = () => {
   useEffect(() => {
     if (address) {
       GET_ALL_ICOSALE_TOKEN().then((token) => {
-        console.log("ALL",token);
         setAllICOs(token);
       });
       GET_ALL_USER_ICOSALE_TOKEN().then((token) => {
-        console.log("USER",token);
         setAllUserICOs(token);
       });
     }
-  },[address, reCall]);
+  }, [address, reCall]);
 
   return (
     <div>
@@ -104,7 +102,36 @@ const index = () => {
         setOpenICOMarketplace={setOpenICOMarketplace}
         openICOMarketplace={openICOMarketplace}
       />
-      {openAllICO && <ICOMarket />}
+      <div className="create">
+        <h1 style={{ fontSize: "2rem" }}>All ICOs Marketplace</h1>
+        {allICOs?.length != 0 && (
+          <Marketplace
+            array={allICOs}
+            shortenAddress={shortenAddress}
+            setBuyICO={setBuyICO}
+            setOpenBuyToken={setOpenBuyToken}
+            currency={currency}
+          />
+        )}
+        <Card
+          setOpenAllICO={setOpenAllICO}
+          setOpenTokenCreator={setOpenTokenCreator}
+          setOpenTransferToken={setOpenTransferToken}
+          setOpenTokenHistory={setOpenTokenHistory}
+          setOpenWidthdrawToken={setOpenWidthdrawToken}
+          setOpenICOMarketplace={setOpenICOMarketplace}
+          copyAddress={copyAddress}
+          setOpenCreateICO={setOpenCreateICO}
+        />
+      </div>
+      {openAllICO && (
+        <ICOMarket
+          array={allICOs}
+          shortenAddress={shortenAddress}
+          handleClick={setOpenAllICO}
+          currency={currency}
+        />
+      )}
       {openTokenCreator && (
         <TokenCreator
           createERC20={createERC20}
@@ -132,10 +159,40 @@ const index = () => {
           createICOSALE={createICOSALE}
         />
       )}
-      {openICOMarketplace && <ICOMarket />}
-      {openBuyToken && <BuyToken />}
-      {openTransferToken && <TokenTransfer />}
-      {openWidthdrawToken && <WidthdrawToken />}
+      {openICOMarketplace && (
+        <ICOMarket
+          array={allUSerICOs}
+          shortenAddress={shortenAddress}
+          handleClick={setOpenICOMarketplace}
+          currency={currency}
+        />
+      )}
+      {openBuyToken && (
+        <BuyToken
+          address={address}
+          buyToken={buyToken}
+          connectWallet={connectWallet}
+          setOpenBuyToken={setOpenBuyToken}
+          buyICO={buyICO}
+          currency={currency}
+        />
+      )}
+      {openTransferToken && (
+        <TokenTransfer
+          address={address}
+          transferTokens={transferTokens}
+          connectWallet={connectWallet}
+          setOpenTransferToken={setOpenTransferToken}
+        />
+      )}
+      {openWidthdrawToken && (
+        <WidthdrawToken
+          address={address}
+          widthdrawToken={widthdrawToken}
+          connectWallet={connectWallet}
+          setOpenWidthdrawToken={setOpenWidthdrawToken}
+        />
+      )}
 
       <Footer />
       {loader && <Loader />}

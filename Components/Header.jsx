@@ -62,7 +62,7 @@ const Header = ({
                   : setOpenICOMarketplace(true);
               }}
             >
-              ICO Marketplace
+              Created ICO
             </a>
           </li>
           <li>
@@ -71,7 +71,7 @@ const Header = ({
                 openAllICO ? setOpenAllICO(false) : setOpenAllICO(true);
               }}
             >
-              Created ICO
+              ICO Marketplace
             </a>
           </li>
           <li>
@@ -107,8 +107,7 @@ const Header = ({
             </li>
           ) : (
             <li>
-              <Button name="Connect Wallet"
-              handleClick={connectWallet}/>
+              <Button name="Connect Wallet" handleClick={connectWallet} />
             </li>
           )}
         </ul>
