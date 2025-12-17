@@ -53,8 +53,8 @@ const index = () => {
     shortenAddress,
   } = useStateContext();
 
-  const notifySuccess = (msg) => toast.success(msg, { duration: 200 });
-  const notifyError = (msg) => toast.error(msg, { duration: 200 });
+  const notifySuccess = (msg) => toast.success(msg, { duration: 2000 });
+  const notifyError = (msg) => toast.error(msg, { duration: 2000 });
 
   const [allICOs, setAllICOs] = useState();
   const [allUSerICOs, setAllUserICOs] = useState();
@@ -90,8 +90,25 @@ const index = () => {
         openICOMarketplace={openICOMarketplace}
       />
       {openAllICO && <ICOMarket />}
-      {openTokenCreator && <TokenCreator />}
-      {openTokenHistory && <CreateICO />}
+      {openTokenCreator && (
+        <TokenCreator
+          createERC20={createERC20}
+          shortenAddress={shortenAddress}
+          setOpenTokenCreator={setOpenTokenCreator}
+          setLoader={setLoader}
+          address={address}
+          connectWallet={connectWallet}
+          PINATA_AIP_KEY={PINATA_AIP_KEY}
+          PINATA_SECRECT_KEY={PINATA_SECRECT_KEY}
+        />
+      )}
+      {openTokenHistory && (
+        <TokenHistory
+          shortenAddress={shortenAddress}
+          setOpenTokenHistory={setOpenTokenHistory}
+        />
+      )}
+      {openCreateICO && <CreateICO />}
       {openICOMarketplace && <ICOMarket />}
       {openBuyToken && <BuyToken />}
       {openTransferToken && <TokenTransfer />}

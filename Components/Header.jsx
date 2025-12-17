@@ -96,17 +96,6 @@ const Header = ({
               Create Token
             </a>
           </li>
-          <li>
-            <a
-              onClick={() => {
-                openTokenCreator
-                  ? setOpenTokenCreator(false)
-                  : setOpenTokenCreator(true);
-              }}
-            >
-              Create Token
-            </a>
-          </li>
           {address ? (
             <li>
               <Button

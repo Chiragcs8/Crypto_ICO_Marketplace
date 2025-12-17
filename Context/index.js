@@ -40,8 +40,8 @@ export const StateContextProvider = ({ children }) => {
   const [openTokenCreator, setOpenTokenCreator] = useState(false);
   const [openCreateICO, setOpenCreateICO] = useState(false);
 
-  const notifySuccess = (msg) => toast.success(msg, { duration: 200 });
-  const notifyError = (msg) => toast.error(msg, { duration: 200 });
+  const notifySuccess = (msg) => toast.success(msg, { duration: 2000 });
+  const notifyError = (msg) => toast.error(msg, { duration: 2000 });
 
   //FUNCTIONS
   const checkIfWalletConnected = async () => {
@@ -67,9 +67,9 @@ export const StateContextProvider = ({ children }) => {
       notifyError("No account found");
     }
   };
-  useEffect(()=>{
+  useEffect(() => {
     checkIfWalletConnected();
-  },[address])
+  }, [address]);
 
   const connectWallet = async () => {
     try {
@@ -142,13 +142,13 @@ export const StateContextProvider = ({ children }) => {
         if (history) {
           tokenHistory = JSON.parse(localStorage.getItem("TOKEN_HISTORY"));
           tokenHistory.push(_token);
-          localStorage.setItem("TOKEN_HISTORY", tokenHistory);
+          localStorage.setItem("TOKEN_HISTORY", JSON.stringify(tokenHistory));
           setLoader(false);
           setReCall(reCall + 1);
           setOpenTokenCreator(false);
         } else {
           tokenHistory.push(_token);
-          localStorage.setItem("TOKEN_HISTORY", tokenHistory);
+          localStorage.setItem("TOKEN_HISTORY", JSON.stringify(tokenHistory));
           setLoader(false);
           setReCall(reCall + 1);
           setOpenTokenCreator(false);
