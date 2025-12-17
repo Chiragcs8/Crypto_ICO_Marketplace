@@ -45,6 +45,7 @@ const index = () => {
     setAddress,
     accountBalance,
     loader,
+    reCall,
     setLoader,
     currency,
     PINATA_AIP_KEY,
@@ -59,6 +60,7 @@ const index = () => {
   const [allICOs, setAllICOs] = useState();
   const [allUSerICOs, setAllUserICOs] = useState();
 
+  //COMPONENT OPEN
   const [openAllICO, setOpenAllICO] = useState(false);
   const [openTokenHistory, setOpenTokenHistory] = useState(false);
   const [openICOMarketplace, setOpenICOMarketplace] = useState(false);
@@ -70,6 +72,19 @@ const index = () => {
     navigator.clipboard.writeText(ICO_MARKETPLACE_ADDRESS);
     notifySuccess("Copid successfully");
   };
+
+  useEffect(() => {
+    if (address) {
+      GET_ALL_ICOSALE_TOKEN().then((token) => {
+        console.log("ALL",token);
+        setAllICOs(token);
+      });
+      GET_ALL_USER_ICOSALE_TOKEN().then((token) => {
+        console.log("USER",token);
+        setAllUserICOs(token);
+      });
+    }
+  },[address, reCall]);
 
   return (
     <div>
@@ -108,7 +123,15 @@ const index = () => {
           setOpenTokenHistory={setOpenTokenHistory}
         />
       )}
-      {openCreateICO && <CreateICO />}
+      {openCreateICO && (
+        <CreateICO
+          shortenAddress={shortenAddress}
+          setOpenCreateICO={setOpenCreateICO}
+          connectWallet={connectWallet}
+          address={address}
+          createICOSALE={createICOSALE}
+        />
+      )}
       {openICOMarketplace && <ICOMarket />}
       {openBuyToken && <BuyToken />}
       {openTransferToken && <TokenTransfer />}

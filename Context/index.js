@@ -191,7 +191,8 @@ export const StateContextProvider = ({ children }) => {
       const contract = await ICO_MARKETPLACE_CONTRACT();
 
       if (address) {
-        const allICOSaleToken = await contract.getAllToken();
+        const allICOSaleToken = await contract.getAllTokens();
+        
 
         const _tokenArray = Promise.all(
           allICOSaleToken.map(async (token) => {
@@ -203,7 +204,7 @@ export const StateContextProvider = ({ children }) => {
             return {
               creator: token.creator,
               token: token.token,
-              namw: token.name,
+              name: token.name,
               symbol: token.symbol,
               supported: token.supported,
               price: ethers.utils.formatEther(token?.price.toString()),
@@ -239,7 +240,7 @@ export const StateContextProvider = ({ children }) => {
             return {
               creator: token.creator,
               token: token.token,
-              namw: token.name,
+              name: token.name,
               symbol: token.symbol,
               supported: token.supported,
               price: ethers.utils.formatEther(token?.price.toString()),
@@ -267,7 +268,7 @@ export const StateContextProvider = ({ children }) => {
 
       const contract = await ICO_MARKETPLACE_CONTRACT();
 
-      const payAmount = ethers.utils.parseUnits(price.toString(), "ethers");
+      const payAmount = ethers.utils.parseUnits(price.toString(), "ether");
 
       const transaction = await contract.createICOSale(address, payAmount, {
         gasLimit: ethers.utils.hexlify(8000000),
@@ -448,6 +449,7 @@ export const StateContextProvider = ({ children }) => {
         setAddress,
         accountBalance,
         loader,
+        reCall,
         setLoader,
         currency,
         PINATA_AIP_KEY,
