@@ -8,7 +8,8 @@ A decentralized marketplace built with **Next.js** and **Ethers.js** that lets u
 
 ---
 
-## 👨‍💻 Project By: [@Chiragcs8]
+## 👨‍💻 Project By: @Chiragcs8
+
 
 ---
 
@@ -205,4 +206,5 @@ If you'd like, I can:
 * Fix common Solidity issues and prepare the repo for deployment.
 
 ---
+
 
