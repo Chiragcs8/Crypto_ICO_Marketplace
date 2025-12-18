@@ -207,7 +207,7 @@ export const StateContextProvider = ({ children }) => {
               symbol: token.symbol,
               supported: token.supported,
               price: ethers.utils.formatEther(token?.price.toString()),
-              icoSaleBal: ethers.utils.formatEther(balance?.toString()),
+              icoSaleBal: ethers.utils.formatEther(balance.toString()),
             };
           })
         );
@@ -245,11 +245,10 @@ export const StateContextProvider = ({ children }) => {
               price: ethers.utils.formatEther(token?.price.toString()),
               icoSaleBal: ethers.utils.formatEther(balance?.toString()),
             };
-            
           })
         );
         setLoader(false);
-        
+
         return _tokenArray;
       }
     } catch (error) {

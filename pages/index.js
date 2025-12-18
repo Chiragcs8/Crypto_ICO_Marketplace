@@ -77,9 +77,11 @@ const index = () => {
     if (address) {
       GET_ALL_ICOSALE_TOKEN().then((token) => {
         setAllICOs(token);
+        console.log(token);
       });
       GET_ALL_USER_ICOSALE_TOKEN().then((token) => {
         setAllUserICOs(token);
+        console.log(token);
       });
     }
   }, [address, reCall]);
