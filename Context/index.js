@@ -197,9 +197,7 @@ export const StateContextProvider = ({ children }) => {
           allICOSaleToken.map(async (token) => {
             const tokenContract = await TOKEN_CONTRACT(token?.token);
 
-            const balance = await tokenContract.balanceOf(
-              ICO_MARKETPLACE_ADDRESS
-            );
+            const totalSupply = await tokenContract.totalSupply();
             return {
               creator: token.creator,
               token: token.token,
@@ -207,7 +205,7 @@ export const StateContextProvider = ({ children }) => {
               symbol: token.symbol,
               supported: token.supported,
               price: ethers.utils.formatEther(token?.price.toString()),
-              icoSaleBal: ethers.utils.formatEther(balance.toString()),
+              icoSaleBal: ethers.utils.formatEther(totalSupply.toString()),
             };
           })
         );
@@ -233,9 +231,7 @@ export const StateContextProvider = ({ children }) => {
           allICOSaleToken.map(async (token) => {
             const tokenContract = await TOKEN_CONTRACT(token?.token);
 
-            const balance = await tokenContract.balanceOf(
-              ICO_MARKETPLACE_ADDRESS
-            );
+            const totalSupply = await tokenContract.totalSupply();
             return {
               creator: token.creator,
               token: token.token,
@@ -243,7 +239,7 @@ export const StateContextProvider = ({ children }) => {
               symbol: token.symbol,
               supported: token.supported,
               price: ethers.utils.formatEther(token?.price.toString()),
-              icoSaleBal: ethers.utils.formatEther(balance?.toString()),
+              icoSaleBal: ethers.utils.formatEther(totalSupply.toString()),
             };
           })
         );
