@@ -8,11 +8,24 @@ A decentralized marketplace built with **Next.js** and **Ethers.js** that lets u
 
 ---
 
-## 👨‍💻 Project By: [@your-github-username]
+## 👨‍💻 Project By: [@Chiragcs8]
+
+---
 
 ## 🚀 About
 
 This repository is a full‑stack frontend for a crypto ICO marketplace. It ships a polished React/Next.js UI and Solidity contracts (simple ERC‑20 + PreSale contract) so you can prototype token launches and a marketplace for pre‑sales. The project demonstrates token creation, token sale lifecycle, token purchases, and basic token management utilities.
+
+---
+
+# 🪙 Crypto ICO Marketplace Deployed
+
+[![Live Demo](https://img.shields.io/badge/Live-Demo-green)](https://crypto-ico-marketplace-cs.vercel.app/)
+
+## 🌐 Live Demo
+
+* 🔗 **Frontend**: https://crypto-ico-marketplace-cs.vercel.app/
+* 📄 **Smart Contract**: https://www.oklink.com/amoy/address/0xc64a7add1e75eb3d0dd31cf302f9bff449486791
 
 ---
 
@@ -192,3 +205,4 @@ If you'd like, I can:
 * Fix common Solidity issues and prepare the repo for deployment.
 
 ---
+
